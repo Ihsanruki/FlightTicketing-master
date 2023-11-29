@@ -26,6 +26,7 @@ import java.util.Date;
 public class CreateBooking extends VerticalLayout {
     private LocationDao locationDao;
     private final ScheduleDao scheduleDao;
+
     public CreateBooking() {
         locationDao = new LocationDao();
         scheduleDao = new ScheduleDao();
@@ -46,14 +47,27 @@ public class CreateBooking extends VerticalLayout {
         DatePicker arrivalDatePicker = new DatePicker("Tanggal kepulangan");
         Button searchButton =new Button("Search");
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        add(fromComboBox, toCombobox, departureDatePicker, arrivalDatePicker, searchButton);
-
         Grid<ScheduleDTO> grid = new Grid<>(ScheduleDTO.class, false);
         grid.addColumn(ScheduleDTO::getId).setHeader("Id");
         grid.addColumn(ScheduleDTO::getFlightNumber).setHeader("Nomor pesawat");
         grid.addColumn(ScheduleDTO::getDepartureLocation).setHeader("Keberangkatan");
         grid.addColumn(ScheduleDTO::getArrivalLocation).setHeader("kedatangan");
         grid.addColumn(ScheduleDTO::getDepartureDate).setHeader("Waktu keberangkatan");
+        add(fromComboBox, toCombobox, departureDatePicker, arrivalDatePicker, searchButton);
+                searchButton.addClickListener(ClickEvent -> {
+                    Collection<ScheduleDTO> scheduleDTOCollection = scheduleDao.searchSchedule(
+                            fromComboBox.getValue().getId(),
+                            toCombobox.getValue().getId(),
+                            departureDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    );
+
+
+
+
+                    grid.setItems(scheduleDTOCollection);
+                });
+
+
 
         add(fromComboBox,toCombobox,departureDatePicker,arrivalDatePicker,searchButton,grid);
         searchButton.addClickListener(ClickEvent -> {

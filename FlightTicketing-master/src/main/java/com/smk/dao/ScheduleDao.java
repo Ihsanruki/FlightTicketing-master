@@ -15,6 +15,7 @@ import java.util.Optional;
 public class ScheduleDao implements Dao<Schedule, Integer> {
     private final Optional<Connection> connection;
 
+
     public ScheduleDao(){
         connection = JdbcConnection.getConnection();
     }
